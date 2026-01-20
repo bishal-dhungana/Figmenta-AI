@@ -8,11 +8,17 @@
 
 require('dotenv').config();
 const { Client, GatewayIntentBits, Events } = require('discord.js');
+const { createClient } = require('@supabase/supabase-js');
 
 // Configuration
 const DISCORD_TOKEN = process.env.DISCORD_BOT_TOKEN;
 const N8N_WEBHOOK_URL = process.env.N8N_REPLY_WEBHOOK_URL;
 const ESCALATION_CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
+
+// Supabase client for AI resume
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ozrszmkvkdrbqsnsyfxn.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96cnN6bWt2a2RyYnFzbnN5ZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2NjA3NTgsImV4cCI6MjA4NDIzNjc1OH0.TSraEzfBPdLGDM_AJMn0nQzKp4ntVePhjS84RKE4vIk';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Create Discord client
 const client = new Client({
@@ -101,6 +107,32 @@ client.on(Events.MessageCreate, async (message) => {
         const formatMatch = content.match(/^@[^:]+:\s*(.+)/s);
         if (formatMatch) {
             content = formatMatch[1].trim();
+        }
+
+        // Check for AI resume commands
+        const isAiResumeCommand = content.toLowerCase() === '/ai' ||
+            content.toLowerCase() === 'ai resume' ||
+            content.toLowerCase() === '/ai resume' ||
+            content.toLowerCase() === '"ai resume"';
+
+        if (isAiResumeCommand) {
+            console.log('🤖 AI Resume command detected! Updating phase to ai_active...');
+
+            // Update Supabase to set phase back to ai_active
+            const { error } = await supabase
+                .from('conversations')
+                .update({ phase: 'ai_active' })
+                .eq('session_id', sessionId);
+
+            if (error) {
+                console.error('❌ Failed to resume AI:', error);
+                await message.reply('❌ Failed to resume AI. Please try again.');
+            } else {
+                console.log('✅ AI resumed successfully!');
+                await message.reply(`✅ AI has been resumed for session \`${sessionId}\`. The customer can now chat with Fig1 again.`);
+                await message.react('🤖');
+            }
+            return; // Don't forward this command to web chat
         }
 
         // Send to n8n webhook
