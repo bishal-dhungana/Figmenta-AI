@@ -9,8 +9,10 @@
     <title>Figmenta | Creative Digital Boutique Agency</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Pacifico&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
@@ -55,24 +57,24 @@
             <h2 class="section-title">Our Divisions</h2>
             <div class="services-grid">
                 <div class="service-card">
-                    <div class="service-icon">📱</div>
+                    <div class="service-icon icon-live"><i data-lucide="layout-grid"></i></div>
                     <h3>Figmenta Live</h3>
                     <p>24/7 digital communication: social media management, content creation, influencer marketing,
                         email marketing & Digital PR.</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">🎨</div>
+                    <div class="service-icon icon-studio"><i data-lucide="palette"></i></div>
                     <h3>Figmenta Studio</h3>
                     <p>Brand identity, websites, mobile apps, AI chatbots, AI agents & automations. Future-proof digital
                         solutions.</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">📸</div>
+                    <div class="service-icon icon-productions"><i data-lucide="camera"></i></div>
                     <h3>Figmenta Productions</h3>
                     <p>Photography, video production & AI-generated synthetic media. Internal photographic studio.</p>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">📈</div>
+                    <div class="service-icon icon-media"><i data-lucide="trending-up"></i></div>
                     <h3>Figmenta Media</h3>
                     <p>Paid advertising & growth marketing: Google, META, TikTok, LinkedIn, YouTube Ads, SEO & CRO.</p>
                 </div>
@@ -86,28 +88,28 @@
             <h2 class="section-title">Our Work</h2>
             <div class="services-grid">
                 <div class="service-card" style="text-align: center;">
-                    <div class="service-icon">💄</div>
+                    <div class="service-icon icon-beauty"><i data-lucide="sparkles"></i></div>
                     <h3>Beauty Brands</h3>
                     <p>Brand identity and digital marketing for P&G, Coty, and premium skincare lines.</p>
-                    <span style="color: var(--accent-primary); font-size: 0.85rem;">10+ Years Experience</span>
+                    <span class="badge">10+ Years Experience</span>
                 </div>
                 <div class="service-card" style="text-align: center;">
-                    <div class="service-icon">👗</div>
+                    <div class="service-icon icon-fashion"><i data-lucide="shirt"></i></div>
                     <h3>Fashion & Luxury</h3>
                     <p>E-commerce and social media campaigns for high-end fashion brands.</p>
-                    <span style="color: var(--accent-primary); font-size: 0.85rem;">Award Winner 2024</span>
+                    <span class="badge">Award Winner 2024</span>
                 </div>
                 <div class="service-card" style="text-align: center;">
-                    <div class="service-icon">🍾</div>
+                    <div class="service-icon icon-beverages"><i data-lucide="wine"></i></div>
                     <h3>Luxury Beverages</h3>
                     <p>Digital strategies for premium wine, spirits, and luxury beverage brands.</p>
-                    <span style="color: var(--accent-primary); font-size: 0.85rem;">International Clients</span>
+                    <span class="badge">International Clients</span>
                 </div>
                 <div class="service-card" style="text-align: center;">
-                    <div class="service-icon">🤖</div>
+                    <div class="service-icon icon-ai"><i data-lucide="bot"></i></div>
                     <h3>AI & Innovation</h3>
                     <p>AI chatbots, agents, and automations for forward-thinking businesses.</p>
-                    <span style="color: var(--accent-primary); font-size: 0.85rem;">Cutting-edge Solutions</span>
+                    <span class="badge">Cutting-edge Solutions</span>
                 </div>
             </div>
             <div style="text-align: center; margin-top: 2rem;">
@@ -207,6 +209,7 @@
     </div>
 
     <script src="chat-widget.js"></script>
+    <script>lucide.createIcons();</script>
 </body>
 
 </html>

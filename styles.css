@@ -1,17 +1,24 @@
-/* ===== CSS Variables ===== */
+/* ===== CSS Variables - Figmenta Style ===== */
 :root {
-    --primary: #6366f1;
-    --primary-dark: #4f46e5;
-    --primary-light: #818cf8;
-    --secondary: #f43f5e;
-    --bg-dark: #0f0f1a;
-    --bg-darker: #080810;
-    --bg-card: #1a1a2e;
+    /* Colors - Figmenta Palette */
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0f;
+    --bg-card: #141419;
     --text-primary: #ffffff;
     --text-secondary: #a0a0b0;
-    --gradient-start: #6366f1;
-    --gradient-end: #ec4899;
-    --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
+
+    /* Accent Colors - Purple/Magenta/Blue */
+    --accent-purple: #8B5CF6;
+    --accent-magenta: #EC4899;
+    --accent-blue: #2112D4;
+    --accent-primary: #B500B5;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #8B5CF6, #EC4899);
+    --gradient-glow: linear-gradient(135deg, #8B5CF6, #EC4899, #2112D4);
+
+    /* Effects */
+    --shadow-glow: 0 0 40px rgba(139, 92, 246, 0.3);
     --border-radius: 16px;
     --border-radius-sm: 8px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -29,8 +36,8 @@ html {
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-dark);
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
     overflow-x: hidden;
@@ -42,16 +49,23 @@ body {
     padding: 0 24px;
 }
 
-/* ===== Typography ===== */
+/* ===== Typography - Figmenta Style ===== */
 h1,
 h2,
 h3 {
-    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
     line-height: 1.2;
 }
 
+/* Script font for accents (like "Imaginary") */
+.script-text {
+    font-family: 'Pacifico', cursive;
+    font-weight: 400;
+}
+
 .gradient-text {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -68,7 +82,7 @@ h3 {
     left: 0;
     right: 0;
     z-index: 100;
-    background: rgba(15, 15, 26, 0.8);
+    background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -78,12 +92,12 @@ h3 {
     align-items: center;
     gap: 12px;
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .logo-icon {
-    color: var(--primary);
-    font-size: 1.8rem;
+    color: var(--accent-purple);
+    font-size: 1.5rem;
 }
 
 .nav-links {
@@ -94,12 +108,29 @@ h3 {
 .nav-links a {
     color: var(--text-secondary);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 400;
+    font-size: 0.95rem;
     transition: var(--transition);
+    position: relative;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transition: width 0.3s ease;
 }
 
 .nav-links a:hover {
     color: var(--text-primary);
+}
+
+.nav-links a:hover::after {
+    width: 100%;
 }
 
 /* ===== Hero Section ===== */
@@ -122,13 +153,15 @@ h3 {
     font-size: clamp(2.5rem, 6vw, 4.5rem);
     margin-bottom: 24px;
     letter-spacing: -0.02em;
+    font-weight: 600;
 }
 
 .hero-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     color: var(--text-secondary);
     margin-bottom: 40px;
     max-width: 600px;
+    font-weight: 300;
 }
 
 .hero-cta {
@@ -142,38 +175,39 @@ h3 {
     padding: 16px 32px;
     border-radius: 50px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
     border: none;
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    text-decoration: none;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    background: var(--gradient-primary);
     color: white;
     box-shadow: var(--shadow-glow);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 60px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 60px rgba(139, 92, 246, 0.5);
 }
 
 .btn-secondary {
     background: transparent;
     color: var(--text-primary);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-secondary:hover {
-    border-color: var(--primary);
-    background: rgba(99, 102, 241, 0.1);
+    border-color: var(--accent-purple);
+    background: rgba(139, 92, 246, 0.1);
 }
 
-/* ===== Floating Shapes ===== */
+/* ===== Floating Shapes / Glow Background ===== */
 .hero-visual {
     position: absolute;
     top: 0;
@@ -187,33 +221,33 @@ h3 {
 .floating-shape {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.5;
+    filter: blur(100px);
+    opacity: 0.4;
     animation: float 20s ease-in-out infinite;
 }
 
 .shape-1 {
-    width: 400px;
-    height: 400px;
-    background: var(--primary);
+    width: 500px;
+    height: 500px;
+    background: var(--accent-purple);
     top: 10%;
     right: 10%;
     animation-delay: 0s;
 }
 
 .shape-2 {
-    width: 300px;
-    height: 300px;
-    background: var(--secondary);
+    width: 400px;
+    height: 400px;
+    background: var(--accent-magenta);
     top: 40%;
     right: 30%;
     animation-delay: -5s;
 }
 
 .shape-3 {
-    width: 250px;
-    height: 250px;
-    background: var(--gradient-end);
+    width: 350px;
+    height: 350px;
+    background: var(--accent-blue);
     top: 60%;
     right: 5%;
     animation-delay: -10s;
@@ -227,28 +261,29 @@ h3 {
     }
 
     25% {
-        transform: translate(20px, -30px) rotate(5deg);
+        transform: translate(30px, -40px) rotate(5deg);
     }
 
     50% {
-        transform: translate(-10px, 20px) rotate(-5deg);
+        transform: translate(-20px, 30px) rotate(-5deg);
     }
 
     75% {
-        transform: translate(30px, 10px) rotate(3deg);
+        transform: translate(40px, 20px) rotate(3deg);
     }
 }
 
 /* ===== Services Section ===== */
 .services {
     padding: 120px 0;
-    background: var(--bg-darker);
+    background: var(--bg-secondary);
 }
 
 .section-title {
     font-size: 2.5rem;
     text-align: center;
     margin-bottom: 60px;
+    font-weight: 600;
 }
 
 .services-grid {
@@ -261,29 +296,118 @@ h3 {
     background: var(--bg-card);
     padding: 40px 32px;
     border-radius: var(--border-radius);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     transition: var(--transition);
 }
 
 .service-card:hover {
     transform: translateY(-8px);
-    border-color: rgba(99, 102, 241, 0.3);
+    border-color: rgba(139, 92, 246, 0.3);
     box-shadow: var(--shadow-glow);
 }
 
+/* ===== Icon Styling - Figmenta 3D Style ===== */
 .service-icon {
-    font-size: 3rem;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 20px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+}
+
+.service-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke-width: 1.5;
+}
+
+/* Individual icon colors */
+.icon-live {
+    background: linear-gradient(135deg, #3B82F6, #1E40AF);
+}
+
+.icon-live svg {
+    color: #93C5FD;
+}
+
+.icon-studio {
+    background: linear-gradient(135deg, #EC4899, #BE185D);
+}
+
+.icon-studio svg {
+    color: #F9A8D4;
+}
+
+.icon-productions {
+    background: linear-gradient(135deg, #8B5CF6, #5B21B6);
+}
+
+.icon-productions svg {
+    color: #C4B5FD;
+}
+
+.icon-media {
+    background: linear-gradient(135deg, #14B8A6, #0D9488);
+}
+
+.icon-media svg {
+    color: #5EEAD4;
+}
+
+.icon-beauty {
+    background: linear-gradient(135deg, #F472B6, #DB2777);
+}
+
+.icon-beauty svg {
+    color: #FBCFE8;
+}
+
+.icon-fashion {
+    background: linear-gradient(135deg, #60A5FA, #2563EB);
+}
+
+.icon-fashion svg {
+    color: #BFDBFE;
+}
+
+.icon-beverages {
+    background: linear-gradient(135deg, #34D399, #059669);
+}
+
+.icon-beverages svg {
+    color: #A7F3D0;
+}
+
+.icon-ai {
+    background: linear-gradient(135deg, #A78BFA, #7C3AED);
+}
+
+.icon-ai svg {
+    color: #DDD6FE;
 }
 
 .service-card h3 {
     font-size: 1.25rem;
     margin-bottom: 12px;
+    font-weight: 600;
 }
 
 .service-card p {
     color: var(--text-secondary);
     font-size: 0.95rem;
+    font-weight: 300;
+}
+
+/* Badge styling */
+.badge {
+    display: inline-block;
+    margin-top: 12px;
+    color: var(--accent-purple);
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
 /* ===== About Section ===== */
@@ -301,12 +425,14 @@ h3 {
     color: var(--text-secondary);
     font-size: 1.1rem;
     margin-bottom: 24px;
+    font-weight: 300;
 }
 
 /* ===== Footer ===== */
 .footer {
     padding: 40px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--bg-primary);
 }
 
 .footer-content {
@@ -342,20 +468,20 @@ h3 {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    background: var(--gradient-primary);
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
     transition: var(--transition);
 }
 
 .chat-toggle:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 30px rgba(99, 102, 241, 0.6);
+    box-shadow: 0 6px 30px rgba(139, 92, 246, 0.6);
 }
 
 .chat-popup {
@@ -398,7 +524,7 @@ h3 {
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    background: var(--gradient-primary);
 }
 
 .chat-header-info {
@@ -488,14 +614,14 @@ h3 {
 }
 
 .message.bot {
-    background: rgba(99, 102, 241, 0.15);
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.2);
     align-self: flex-start;
     border-bottom-left-radius: 4px;
 }
 
 .message.user {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    background: var(--gradient-primary);
     align-self: flex-end;
     border-bottom-right-radius: 4px;
 }
@@ -526,7 +652,7 @@ h3 {
 .typing-indicator span {
     width: 8px;
     height: 8px;
-    background: var(--primary);
+    background: var(--accent-purple);
     border-radius: 50%;
     animation: bounce 1.4s infinite ease-in-out;
 }
@@ -557,7 +683,7 @@ h3 {
     display: flex;
     gap: 12px;
     padding: 16px;
-    background: var(--bg-darker);
+    background: var(--bg-secondary);
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -569,13 +695,14 @@ h3 {
     background: var(--bg-card);
     color: var(--text-primary);
     font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
     outline: none;
     transition: var(--transition);
 }
 
 #chat-input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
 #chat-input::placeholder {
@@ -586,7 +713,7 @@ h3 {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    background: var(--gradient-primary);
     border: none;
     cursor: pointer;
     display: flex;
