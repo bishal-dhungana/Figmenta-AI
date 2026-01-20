@@ -1,0 +1,153 @@
+{
+  "name": "Discord Reply Receiver",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "discord-reply",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Discord Reply Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -592,
+        1264
+      ],
+      "id": "a644d8d1-0d4c-4f57-97dc-02d1ee843b05",
+      "webhookId": "e8c66e43-6bdf-41e5-b6c4-0587fbdeb2c2"
+    },
+    {
+      "parameters": {
+        "tableId": "messages",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "session_id",
+              "fieldValue": "={{ $json.body.session_id }}"
+            },
+            {
+              "fieldId": "role",
+              "fieldValue": "human"
+            },
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $json.body.content }}"
+            }
+          ]
+        }
+      },
+      "name": "Save Human Message",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        1264
+      ],
+      "id": "7a9bf3f4-e9a9-4d97-bbf0-00010bf852a7",
+      "credentials": {
+        "supabaseApi": {
+          "id": "AHP5fWzSHYnnO3DG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "conversations",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "session_id",
+              "fieldValue": "={{ $('Discord Reply Webhook1').item.json.body.session_id }}"
+            },
+            {
+              "fieldId": "phase",
+              "fieldValue": "human_active"
+            }
+          ]
+        }
+      },
+      "name": "Update Conversation Phase1",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        1264
+      ],
+      "id": "f2a05c96-255e-4bf0-a714-9f7d32f2d930",
+      "credentials": {
+        "supabaseApi": {
+          "id": "AHP5fWzSHYnnO3DG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"success\": true, \"message\": \"Human reply saved\" }",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "Respond Success1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        112,
+        1264
+      ],
+      "id": "22168fd5-229c-49fe-a27c-135cee65eef6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Discord Reply Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Save Human Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Human Message": {
+      "main": [
+        [
+          {
+            "node": "Update Conversation Phase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Conversation Phase1": {
+      "main": [
+        [
+          {
+            "node": "Respond Success1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "c203c3d1-d4e6-409f-aff6-56de2e089cf0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3307acfc4e0bbdfcf59b76b6fd445cc08895f5401436bad3550d2f7a1ec59e72"
+  },
+  "id": "mI-TNYGwOzpolgFrk6I4Z",
+  "tags": []
+}

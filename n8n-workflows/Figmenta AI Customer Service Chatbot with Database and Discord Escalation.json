@@ -1,0 +1,705 @@
+{
+  "name": "Figmenta AI Customer Service Chatbot with Database and Discord Escalation",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst options = { timeZone: 'Europe/Rome', hour: 'numeric', weekday: 'short', hour12: false };\nconst formatter = new Intl.DateTimeFormat('en-US', options);\nconst parts = formatter.formatToParts(now);\nconst hourPart = parts.find(p => p.type === 'hour');\nconst hour = hourPart ? parseInt(hourPart.value) : 0;\nconst weekdayPart = parts.find(p => p.type === 'weekday');\nconst weekday = weekdayPart ? weekdayPart.value : '';\nconst weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];\nconst isBusinessHours = weekdays.includes(weekday) && hour >= 9 && hour < 18;\nreturn [{ json: { isBusinessHours, hour, weekday } }];"
+      },
+      "id": "a26023a1-b5ab-4571-bbd5-920e310c73ae",
+      "name": "Check Business Hours",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3728,
+        1056
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c70b2e42-d65c-4203-b195-a4781038810c",
+              "leftValue": "={{ $json.isBusinessHours }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -3488,
+        1040
+      ],
+      "id": "07929d23-3543-41f1-99ce-f0048fd5fd32",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ response: \"Our team is currently offline (Mon-Fri, 9AM-6PM CET). Please share your email and project details, and we'll get back to you first thing!\", session_id: $('Workflow Configuration').item.json.sessionId, outside_hours: true }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -3248,
+        1360
+      ],
+      "id": "2d2cb88a-8006-4bf1-b468-16a0d8170c4d",
+      "name": "Respond Outside Hours"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1462139813334352010",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1462179562338386198",
+          "mode": "id"
+        },
+        "content": "=📩 **New message from customer**\n\n**Session ID:** {{ $('Workflow Configuration1').item.json.sessionId }}\n\n**Message:**\n{{ $('Workflow Configuration1').item.json.message }}\n\n💬 Reply with: @{{ $('Workflow Configuration1').item.json.sessionId }}: your reply",
+        "options": {}
+      },
+      "id": "d00d9a9d-0c97-4a51-8461-701546fe85b8",
+      "name": "Forward to Human",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -4928,
+        896
+      ],
+      "webhookId": "d0631e51-4289-4c73-9d52-64b2b7f7f1bc",
+      "credentials": {
+        "discordBotApi": {
+          "id": "bZFrYgILWnk3YZyD",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "080c09ed-9327-47d3-b7b9-66d7f5c23ada",
+      "name": "Chat Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -6112,
+        1184
+      ],
+      "webhookId": "039fca18-92cf-4549-a7a9-e77aa5f5c98e"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "session_id",
+              "value": "={{ $json.body.session_id || $json.session_id || $now.format('yyyyMMddHHmmss') + '-' + $runIndex }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "message",
+              "value": "={{ $json.body.content || $json.body.message || $json.message || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "sessionId",
+              "value": "={{ $json.body.session_id || $json.session_id || $now.format('yyyyMMddHHmmss') + '-' + $runIndex }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "61abf4a0-3f31-4ea9-bee1-8741df565009",
+      "name": "Workflow Configuration1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5888,
+        1184
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "messages",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "session_id",
+              "fieldValue": "={{ $json.sessionId }}"
+            },
+            {
+              "fieldId": "role",
+              "fieldValue": "user"
+            },
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $json.message }}"
+            }
+          ]
+        }
+      },
+      "id": "17eec559-33cb-4faf-9971-43fd63a5da84",
+      "name": "Store User Message1",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -5664,
+        1184
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AHP5fWzSHYnnO3DG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "conversations",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "session_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Workflow Configuration1').item.json.sessionId }}"
+            }
+          ]
+        }
+      },
+      "id": "e0e25ec9-aab7-4097-92ff-7ac73087a1bd",
+      "name": "Get Conversation State1",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -5440,
+        1184
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "AHP5fWzSHYnnO3DG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.phase ?? 'ai_active' }}",
+              "rightValue": "human_active",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8df262a8-4b2a-4594-afbd-196f514ec5b4",
+      "name": "Check If Human Is Active1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -5216,
+        1184
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"response\": \"A team member is currently handling your conversation. They will respond shortly.\", \"session_id\": \"{{ $('Workflow Configuration1').item.json.sessionId }}\", \"human_active\": true }",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "17c04151-2ab6-4266-9429-0e92a8e6f95b",
+      "name": "Respond Human Active1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -4656,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "openai/gpt-oss-120b",
+          "mode": "list"
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 400,
+          "temperature": 0.7
+        }
+      },
+      "id": "6e486e5f-2c82-4483-9cf6-39af5779af95",
+      "name": "NVIDIA Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -4992,
+        1552
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "RNn3PLuBTzjUswQh",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Workflow Configuration1').item.json.session_id }}",
+        "contextWindowLength": 10
+      },
+      "id": "dfaa9847-cd92-4e3a-b2c7-42ff715bb3e8",
+      "name": "Conversation Memory1",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -4864,
+        1552
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Workflow Configuration1').item.json.message }}",
+        "options": {
+          "systemMessage": "You are Fig1, Figmenta's friendly and professional AI assistant.\n\nABOUT FIGMENTA:\n- Founded in Florence, Italy in 2007 as a Web Agency\n- 2024: Awarded Best Beauty and Fashion Digital Marketing Agency\n- Fully remote across 8 countries\n\nEXPERTISE: Skincare, Haircare, Pharma, Cosmetics, Luxury, Fashion, Perfumes\n\nFOUR DIVISIONS:\n1. Figmenta Live: Social media, content, email marketing\n2. Figmenta Studio: Brand identity, websites, AI solutions\n3. Figmenta Productions: Photography, video, AI media\n4. Figmenta Media: Paid Ads, Growth Marketing\n\nYOUR GOALS:\nCollect 5 pieces: PROJECT TYPE, BRAND NAME, INDUSTRY, BUDGET, TIMELINE.\nAfter all 5, ask for email, then offer 'Talk to someone now' or 'Email later'.\n\nSPECIAL: Job inquiries → hr@figmenta.com"
+        }
+      },
+      "id": "580cccf8-f493-4106-861b-36bdf7d0ab76",
+      "name": "AI Agent1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -4992,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "messages",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "session_id",
+              "fieldValue": "={{ $('Workflow Configuration1').item.json.sessionId }}"
+            },
+            {
+              "fieldId": "role",
+              "fieldValue": "assistant"
+            },
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "id": "2cf5b1b5-0843-492f-b2aa-93d4bdcd28d8",
+      "name": "Store AI Response1",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -4640,
+        1328
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "AHP5fWzSHYnnO3DG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Workflow Configuration1').item.json.message }}",
+        "options": {
+          "systemMessage": "You are an intent classifier. Reply ONLY YES or NO. YES if user wants human help, NO otherwise."
+        }
+      },
+      "id": "f9107c9f-8117-46a9-b718-1b9245689125",
+      "name": "Intent Classifier1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -4416,
+        1328
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "openai/gpt-oss-120b"
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 50,
+          "temperature": 0.1
+        }
+      },
+      "id": "a770bf3c-2d32-4437-ab1d-8f74b978b3c6",
+      "name": "OpenAI Chat Model for Intent1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -4416,
+        1568
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "RNn3PLuBTzjUswQh",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "YES",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "id": "5b2f5a94-0271-4fc3-b34e-95ffe4c7fea0",
+      "name": "Check If User Wants Human1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -4064,
+        1328
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1462139813334352010",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1462179562338386198",
+          "mode": "id"
+        },
+        "content": "=🚨 **CUSTOMER ESCALATION REQUEST** 🚨\n\n**Session ID:** {{ $('Workflow Configuration1').item.json.sessionId }}\n**Time:** {{ new Date().toLocaleString('en-US', { timeZone: 'Europe/Rome' }) }} CET\n\n**Last Message:**\n{{ $('Workflow Configuration1').item.json.message }}\n\n**AI Response:**\n{{ $('Store AI Response1').item.json.content }}\n\n✅ Customer requested to talk to someone now - please respond ASAP!",
+        "options": {}
+      },
+      "id": "8d2dab4d-cf2e-44ba-93ca-9e2b91281229",
+      "name": "Discord Notification1",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -3200,
+        1040
+      ],
+      "webhookId": "de4aef88-bcf2-466b-87b9-81ffc3e05c8e",
+      "credentials": {
+        "discordBotApi": {
+          "id": "bZFrYgILWnk3YZyD",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ response: $('AI Agent1').item.json.output, session_id: $('Workflow Configuration1').item.json.sessionId }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "b00a779d-f2f9-41bc-bd42-e34da6fc07fa",
+      "name": "Respond to Chat Widget1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -2912,
+        1216
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Check Business Hours": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Discord Notification1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Outside Hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Forward to Human": {
+      "main": [
+        [
+          {
+            "node": "Respond Human Active1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration1": {
+      "main": [
+        [
+          {
+            "node": "Store User Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store User Message1": {
+      "main": [
+        [
+          {
+            "node": "Get Conversation State1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Conversation State1": {
+      "main": [
+        [
+          {
+            "node": "Check If Human Is Active1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Human Is Active1": {
+      "main": [
+        [
+          {
+            "node": "Forward to Human",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NVIDIA Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Store AI Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store AI Response1": {
+      "main": [
+        [
+          {
+            "node": "Intent Classifier1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intent Classifier1": {
+      "main": [
+        [
+          {
+            "node": "Check If User Wants Human1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model for Intent1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Intent Classifier1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If User Wants Human1": {
+      "main": [
+        [
+          {
+            "node": "Check Business Hours",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Chat Widget1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Discord Notification1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Chat Widget1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "b91d12c4-177c-4781-b005-7f7eb495faba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3307acfc4e0bbdfcf59b76b6fd445cc08895f5401436bad3550d2f7a1ec59e72"
+  },
+  "id": "-sRuAmJjBm-4nBPx0zfg0",
+  "tags": []
+}
