@@ -1,0 +1,13 @@
+{
+    "name": "figmenta-discord-bot",
+    "version": "1.0.0",
+    "description": "Discord bot for Figmenta AI - Real-time human replies",
+    "main": "bot.js",
+    "scripts": {
+        "start": "node bot.js"
+    },
+    "dependencies": {
+        "discord.js": "^14.14.1",
+        "dotenv": "^16.3.1"
+    }
+}

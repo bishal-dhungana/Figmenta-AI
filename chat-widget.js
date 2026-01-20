@@ -270,6 +270,7 @@ async function sendMessage() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                content: message,
                 message: message,
                 session_id: state.sessionId,
                 timestamp: new Date().toISOString(),
