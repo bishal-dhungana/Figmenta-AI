@@ -761,8 +761,9 @@ h3 {
     }
 
     .chat-popup {
-        width: calc(100vw - 48px);
+        width: calc(100vw - 32px);
         height: 70vh;
-        right: -12px;
+        right: 16px;
+        left: 16px;
     }
 }
